@@ -77,11 +77,15 @@ void* signal_handler_thread(void* arg) {
 
     int n = args->n;
     int w = args->w;
+    int priming = w;
+
     string requests[w];
     string responses[w];
     fd_set read_fds;
 
-    for (int i = 0; i < args->w; i++){
+    if (w > 3*n) priming = 3*n;
+
+    for (int i = 0; i < priming; i++){
         string request = args->request_buffer->pop();
         args->workerChannels[i]->cwrite(request);
         requests[i] = request;
@@ -232,7 +236,7 @@ int main(int argc, char * argv[]) {
         hist_struct hist_args;
         hist_args.histogram = &hist;
 
-        //pthread_create(&histogram_thread, NULL, &display_histogram_function, (void*) &hist_args);
+        pthread_create(&histogram_thread, NULL, &display_histogram_function, (void*) &hist_args);
 
 
         for(int i = 0; i < 3; ++i) pthread_join(request_threads[i], NULL);
@@ -241,7 +245,7 @@ int main(int argc, char * argv[]) {
         for (int i = 0; i < 3; ++i) response_buffers[i].push("quit");
         for(int i = 0; i < 3; ++i) pthread_join(stat_threads[i], NULL);
 
-        //system("clear");
+        system("clear");
         chan->cwrite ("quit");
         delete chan;
         
