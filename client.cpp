@@ -13,7 +13,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include <sys/time.h>
+#include <chrono>
 #include <cassert>
 #include <assert.h>
 
@@ -182,7 +182,7 @@ int main(int argc, char * argv[]) {
         cout << "w == " << w << endl;
         cout << "b == " << b << endl;
 		
-        clock_t begin = clock();
+        chrono::high_resolution_clock::time_point start = chrono::high_resolution_clock::now();
 
         RequestChannel *chan = new RequestChannel("control", RequestChannel::CLIENT_SIDE);
         BoundedBuffer request_buffer(b);
@@ -245,12 +245,11 @@ int main(int argc, char * argv[]) {
         for (int i = 0; i < 3; ++i) response_buffers[i].push("quit");
         for(int i = 0; i < 3; ++i) pthread_join(stat_threads[i], NULL);
 
-        system("clear");
         chan->cwrite ("quit");
         delete chan;
         
-        clock_t end = clock();
-        cout << "Time Elapsed: " << double(end - begin)/CLOCKS_PER_SEC << endl;
-        hist.print();
+        chrono::high_resolution_clock::time_point end = chrono::high_resolution_clock::now();
+        auto duration = (float) ((end - start).count() / 1000000000.0);
+	cout << endl << "Elapsed Time: " << duration << "s" << endl;
     }
 }
