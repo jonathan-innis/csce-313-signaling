@@ -236,7 +236,7 @@ int main(int argc, char * argv[]) {
         hist_struct hist_args;
         hist_args.histogram = &hist;
 
-        pthread_create(&histogram_thread, NULL, &display_histogram_function, (void*) &hist_args);
+        //pthread_create(&histogram_thread, NULL, &display_histogram_function, (void*) &hist_args);
 
 
         for(int i = 0; i < 3; ++i) pthread_join(request_threads[i], NULL);
